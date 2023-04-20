@@ -1,7 +1,14 @@
 export default [
+  // {
+  //   id: 1,
+  //   name: "bulbasaur",
+  //   weight: 69,
+  //   frontPicture:
+  //     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+  // },
   {
-    id: 1,
-    name: "bulbasaur",
+    id: 0,
+    name: "bulbasaursssssss",
     weight: 69,
     frontPicture:
       "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",

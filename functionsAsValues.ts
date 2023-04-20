@@ -310,60 +310,7 @@ function splitEitherValues<L, R>(
   };
 }
 
-type EitherSplitCb = <L, R>() => Either<L, R>[];
-
-function appendLefts<L, R>(
-  eitherSplit: EitherSplit<L, R>
-): <L, R2>(cb: EitherSplitCb) => EitherSplit<L, R2> {
-  return <L, R2>(cb: EitherSplitCb): EitherSplit<L, R2> => {
-    const cbResponse = cb<L, R2>();
-    const { lefts, rights } = splitEither<L, R2>(cbResponse);
-
-    const _lefts = [...eitherSplit.lefts, ...lefts];
-
-    return {
-      lefts: _lefts as Left<L>[],
-      rights: rights,
-    };
-  };
-}
-
-type EitherAsyncSplitCb = <L, R>() => Either<L, R>[];
-
-function appendAsyncLefts<L, R>(
-  eitherSplit: EitherSplit<L, R>
-): <L, R2>(cb: EitherSplitCb) => EitherSplit<L, R2> {
-  return <L, R2>(cb: EitherSplitCb): EitherSplit<L, R2> => {
-    const cbResponse = cb<L, R2>();
-    const { lefts, rights } = splitEither<L, R2>(cbResponse);
-
-    const _lefts = [...eitherSplit.lefts, ...lefts];
-
-    return {
-      lefts: _lefts as Left<L>[],
-      rights: rights,
-    };
-  };
-}
-
-function track<L>(): {
-  keep: <R>(eitherSplit: EitherSplit<L, R>) => EitherSplit<L, R>;
-  tracks: () => L[];
-} {
-  const track: L[] = [];
-
-  return {
-    keep: <R>(eitherSplit: EitherSplit<L, R>): EitherSplit<L, R> => {
-      const _leftValues: L[] = leftValues(eitherSplit.lefts);
-      _leftValues.forEach((left: L) => track.push(left));
-
-      return eitherSplit;
-    },
-    tracks: (): L[] => [...track],
-  };
-}
-
-function track2<L>(): {
+function trackLefts<L>(): {
   keep: <R>(eithers: Either<L | L[], R>[]) => Either<L | L[], R>[];
   tracks: () => L[];
 } {
@@ -386,18 +333,18 @@ function track2<L>(): {
 }
 
 async function main() {
-  const leftsTrack = track2<string[] | string>();
+  const errorTracker = trackLefts<string[] | string>();
 
   return await pokemons()
-    .then(leftsTrack.keep)
+    .then(errorTracker.keep)
     .then(rightValues)
     .then(pokemonNames)
     .then(pokemonsSpecs)
-    .then(leftsTrack.keep)
+    .then(errorTracker.keep)
     .then(splitEitherValues)
-    .then(({ lefts, rights }) => {
+    .then(({ rights }) => {
       return {
-        errors: lefts,
+        errors: errorTracker.tracks(),
         pokemons: rights,
       };
     });
