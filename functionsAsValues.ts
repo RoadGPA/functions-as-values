@@ -56,14 +56,6 @@ function rightValues<L, R>(eithers: Either<L, R>[]): R[] {
   return rights<L, R>(eithers).map(rightValue);
 }
 
-function eitherValue<L, R>(either: Either<L, R>): L | R {
-  return either instanceof Left ? (either.value as L) : (either.value as R);
-}
-
-function eitherValues<L, R>(eithers: Either<L, R>[]): (L | R)[] {
-  return eithers.map(eitherValue);
-}
-
 function everyLeft<L, R>(eithers: Either<L, R>[]): boolean {
   return eithers.every((either) => either instanceof Left);
 }
@@ -204,6 +196,10 @@ async function pokemonSpecs(
     //
     // const rawPokemonSpecs: RawPokemonSpecs = pokemonSpecsResponse.data;
 
+    // return rawPokemonSpecs
+    //   ? rawToPokemonSpecs(rawPokemonSpecs)
+    //   : new Left(`Unable to get the specs of the ${pokemonName} pokemon.`);
+
     const mockedRawPokemonsSpec = mockedPokemonSpecs.find(
       (poke) => pokemonName === poke.name
     );
@@ -211,10 +207,6 @@ async function pokemonSpecs(
     return mockedRawPokemonsSpec
       ? new Right(mockedRawPokemonsSpec)
       : new Left(`Unable to get the specs of the ${pokemonName} pokemon.`);
-
-    // return rawPokemonSpecs
-    //   ? rawToPokemonSpecs(rawPokemonSpecs)
-    //   : new Left(`Unable to get the specs of the ${pokemonName} pokemon.`);
   } catch (err) {
     const { message, code } = err as AxiosError;
     return new Left(`Pokemon [${pokemonName}], ${message} / code ${code}`);
@@ -226,63 +218,6 @@ async function pokemonsSpecs(
 ): Promise<Either<string, PokemonSpecs>[]> {
   return Promise.all(pokemonNames.map(pokemonSpecs));
 }
-
-// pokemonSpecs("pikachu")
-//   .then(result => console.log((eitherValue(result))))
-//   .catch(err => console.log(`error ${err}`));
-
-async function flatAsyncEitherValues<L, R>(promises: Promise<Either<L, R>>[]) {
-  const result: (L | R)[] = [];
-
-  for (const promise of promises) {
-    const promiseEither = await promise;
-    result.push(promiseEither.value);
-  }
-
-  return result;
-}
-
-async function leftsAsync<L, R>(promises: Promise<Either<L, R>>[]) {
-  const result: L[] = [];
-
-  for (const promise of promises) {
-    const promiseEither = await promise;
-    if (promiseEither instanceof Left) {
-      result.push(promiseEither.value);
-    }
-  }
-
-  return result;
-}
-
-async function rightsAsync<L, R>(promises: Promise<Either<L, R>>[]) {
-  const result: R[] = [];
-
-  for (const promise of promises) {
-    const promiseEither = await promise;
-    if (promiseEither instanceof Right) {
-      result.push(promiseEither.value);
-    }
-  }
-
-  return result;
-}
-
-// const d1 = Promise.resolve(new Left<string>("My Left"));
-// const d2 = Promise.resolve(new Right<number>(999));
-// const demos = flatAsyncEitherValues([d1, d2]);
-// console.log(`demos`, demos);
-
-// async function specs(): Promise<PokemonSpecs> {
-//   return pokemons()
-//     .then(rightValues)
-//     .then(pokemons => pokemons.map(pokemonName))
-//     .then(pokemonNames =>
-//       pokemonNames.map(name => pokemonSpecs(name))
-//     );
-//     // .then(pokemonNames => pokemonNames.map(name }) => pokemonSpecs(name)))
-//     // .then(rightValues);
-// }
 
 type EitherSplit<L, R> = {
   lefts: Left<L>[];
