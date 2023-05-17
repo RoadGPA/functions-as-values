@@ -1,3 +1,4 @@
+// Data
 import { Pokemon } from "../1_Data/Pokemon";
 
 export function pokemonName(pokemon: Pokemon): string {

@@ -1,4 +1,3 @@
-import { RawPokemon } from "../1_Data/RawPokemon";
 import {
   Either,
   everyRight,
@@ -6,6 +5,9 @@ import {
   leftValues,
   Right,
 } from "../../1_FPTools/either";
+
+// Data
+import { RawPokemon } from "../1_Data/RawPokemon";
 import { Pokemon } from "../1_Data/Pokemon";
 
 export function rawToPokemon(

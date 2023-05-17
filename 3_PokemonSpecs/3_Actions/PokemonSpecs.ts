@@ -20,14 +20,6 @@ export async function pokemonSpecs(
     return rawPokemonSpecs
       ? rawToPokemonSpecs(rawPokemonSpecs)
       : new Left(`Unable to get the specs of the ${pokemonName} pokemon.`);
-
-    // const mockedRawPokemonsSpec = mockedPokemonSpecs.find(
-    //   (poke) => pokemonName === poke.name
-    // );
-    //
-    // return mockedRawPokemonsSpec
-    //   ? new Right(mockedRawPokemonsSpec)
-    //   : new Left(`Unable to get the specs of the ${pokemonName} pokemon.`);
   } catch (err) {
     const { message, code } = err as AxiosError;
     return new Left(`Pokemon [${pokemonName}], ${message} / code ${code}`);
