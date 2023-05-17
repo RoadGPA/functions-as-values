@@ -1,4 +1,4 @@
-export default [
+export const PokemonsSpecsMock = [
   // {
   //   id: 1,
   //   name: "bulbasaur",
